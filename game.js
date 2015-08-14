@@ -122,9 +122,9 @@ World.prototype.toString = function() {
 
 function Wall() {}
 
-var world = new World(plan, {"#": Wall,
-                             "o": BouncingCritter});
-console.log(world.toString());
+// var world = new World(plan, {"#": Wall,
+//                              "o": BouncingCritter});
+// console.log(world.toString());
 
 var test = {
   prop: 10,
@@ -269,12 +269,12 @@ actionTypes.grow = function(critter) {
 };
 
 actionTypes.move = function(critter, vector, action) {
-  var dest = this.checkDestination)(action, vector);
+  var dest = this.checkDestination(action, vector);
   if (dest == null ||
       critter.energy <= 1 ||
       this.grid.get(dest) != null) {
-        return false;
-  }
+    return false;
+  };
   critter.energy -= 1;
   this.grid.set(vector, null);
   this.grid.set(dest, critter);
@@ -318,12 +318,12 @@ Plant.prototype.act = function(context) {
         type: "reproduce",
         direction: space
       }
-      if (this.energy < 20) {
-        return {
-          type: "grow"
-        };
-      }
     }
+  }
+  if (this.energy < 20) {
+    return {
+      type: "grow"
+    };
   }
 }
 
@@ -331,4 +331,25 @@ function PlantEater() {
   this.energy = 20;
 }
 
-PlantEater.prototype.act = function(context) {}
+PlantEater.prototype.act = function(context) {
+  var space = context.find(" ");
+  if (this.energy > 60 && space) {
+    return {
+      type: "reproduce",
+      direction: space
+    };
+  }
+  var plant = context.find("*");
+  if (plant) {
+    return {
+      type: "eat",
+      direction: plant
+    }
+  }
+  if (space) {
+    return {
+      type: "move",
+      direction: space
+    }
+  }
+}
